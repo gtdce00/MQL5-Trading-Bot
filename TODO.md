@@ -8,12 +8,12 @@
 - [x] เพิ่ม risk-based lot size, stop loss, take profit และ broker volume normalization
 - [x] เพิ่ม daily loss/drawdown breaker, spread filter, session filter และ Magic Number
 - [x] เพิ่ม static safety regression tests
-- [x] จำกัด v0.1.1 ให้ใช้บัญชี hedging เพื่อป้องกัน mixed-ownership net positions
+- [x] จำกัด v1.001 ให้ใช้บัญชี hedging เพื่อป้องกัน mixed-ownership net positions
 - [x] เพิ่ม active-order cleanup และ account-wide risk-breaker liquidation
 
 ## กำลังทำ
 
-- [ ] ยืนยันว่า v0.1.1 Compile แบบไม่มี error/warning ด้วย MetaEditor
+- [ ] ยืนยันว่า v1.001 Compile แบบไม่มี error/warning ด้วย MetaEditor
 
 ## ต้องทำต่อ
 

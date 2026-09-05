@@ -3,7 +3,7 @@
 //|                        Safety-first EMA crossover baseline EA     |
 //+------------------------------------------------------------------+
 #property copyright "MQL5 Trading Bot"
-#property version   "0.101"
+#property version   "1.001"
 #property strict
 
 #include <Trade/Trade.mqh>
@@ -627,7 +627,7 @@ int OnInit()
       Print("Warning: unable to configure symbol filling policy.");
 
    InitializeRiskState();
-   PrintFormat("SafeEMACrossEA v0.1.1 initialized. Trading authorized=%s tester=%s",
+   PrintFormat("SafeEMACrossEA v1.001 initialized. Trading authorized=%s tester=%s",
                TradingAuthorized() ? "true" : "false",
                MQLInfoInteger(MQL_TESTER) ? "true" : "false");
    return INIT_SUCCEEDED;
