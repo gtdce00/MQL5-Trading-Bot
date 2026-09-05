@@ -1,7 +1,7 @@
 #property strict
 #property copyright "2026 MQL5 Trading Bot contributors"
 #property link      "https://github.com/gtdce00/MQL5-Trading-Bot"
-#property version   "0.10"
+#property version   "0.100"
 #property description "Safety-first EMA crossover EA for controlled testing"
 
 #include <Trade/Trade.mqh>
