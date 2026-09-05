@@ -74,10 +74,18 @@ class SafeEMACrossStaticTests(unittest.TestCase):
             3,
         )
 
-    def test_trade_server_retcode_is_verified(self) -> None:
-        self.assertIn("TradeResultSucceeded", self.source)
-        self.assertIn("TRADE_RETCODE_DONE", self.source)
-        self.assertIn("TRADE_RETCODE_PLACED", self.source)
+    def test_trade_server_completion_is_verified(self) -> None:
+        self.assertIn("retcode != TRADE_RETCODE_DONE", self.source)
+        self.assertIn("CancelOwnOrders(false)", self.source)
+        self.assertIn("g_trade.ResultRetcode() != TRADE_RETCODE_DONE", self.source)
+
+    def test_netting_accounts_are_rejected(self) -> None:
+        self.assertIn("ACCOUNT_MARGIN_MODE_RETAIL_HEDGING", self.source)
+        self.assertIn("requires a hedging account", self.source)
+
+    def test_account_breaker_handles_all_ea_exposure(self) -> None:
+        self.assertIn("CancelOwnOrders(true)", self.source)
+        self.assertIn("CloseOwnPositions(true)", self.source)
 
     def test_indicator_handles_are_released(self) -> None:
         release_calls = re.findall(r"IndicatorRelease\(", self.source)

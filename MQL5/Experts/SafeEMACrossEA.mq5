@@ -3,7 +3,7 @@
 //|                        Safety-first EMA crossover baseline EA     |
 //+------------------------------------------------------------------+
 #property copyright "MQL5 Trading Bot"
-#property version   "0.1.0"
+#property version   "0.1.1"
 #property strict
 
 #include <Trade/Trade.mqh>
@@ -40,6 +40,7 @@ double   g_daily_start_equity = 0.0;
 double   g_peak_equity        = 0.0;
 int      g_equity_day_id      = -1;
 bool     g_risk_halt_logged   = false;
+bool     g_exit_pending       = false;
 
 //+------------------------------------------------------------------+
 //| Validate all externally supplied parameters                       |
@@ -72,9 +73,9 @@ bool ValidateInputs()
       Print("Initialization failed: Account protection limits are outside safe bounds.");
       return false;
    }
-   if(InpMaximumPositions < 1 || InpMaximumPositions > 10)
+   if(InpMaximumPositions != 1)
    {
-      Print("Initialization failed: Maximum positions must be in [1, 10].");
+      Print("Initialization failed: safety baseline supports exactly one position.");
       return false;
    }
    if(InpMaximumSpreadPoints < 0 || InpSlippagePoints < 0)
@@ -298,20 +299,57 @@ bool HasForeignPositionOnSymbol()
 }
 
 //+------------------------------------------------------------------+
-//| Confirm that the trade server accepted an operation               |
+//| Count active orders created by this EA                            |
 //+------------------------------------------------------------------+
-bool TradeResultSucceeded()
+int CountOwnOrders(const bool all_symbols)
 {
-   const uint retcode = g_trade.ResultRetcode();
-   return retcode == TRADE_RETCODE_DONE ||
-          retcode == TRADE_RETCODE_DONE_PARTIAL ||
-          retcode == TRADE_RETCODE_PLACED;
+   int count = 0;
+   for(int index = OrdersTotal() - 1; index >= 0; --index)
+   {
+      const ulong ticket = OrderGetTicket(index);
+      if(ticket == 0)
+         continue;
+      if(OrderGetInteger(ORDER_MAGIC) == InpMagicNumber &&
+         (all_symbols || OrderGetString(ORDER_SYMBOL) == _Symbol))
+      {
+         ++count;
+      }
+   }
+   return count;
 }
 
 //+------------------------------------------------------------------+
-//| Close every position owned by this EA                             |
+//| Cancel active orders; this EA never intentionally leaves one      |
 //+------------------------------------------------------------------+
-bool CloseOwnPositions()
+bool CancelOwnOrders(const bool all_symbols)
+{
+   bool all_cancelled = true;
+   for(int index = OrdersTotal() - 1; index >= 0; --index)
+   {
+      const ulong ticket = OrderGetTicket(index);
+      if(ticket == 0)
+         continue;
+      if(OrderGetInteger(ORDER_MAGIC) != InpMagicNumber ||
+         (!all_symbols && OrderGetString(ORDER_SYMBOL) != _Symbol))
+      {
+         continue;
+      }
+
+      if(!g_trade.OrderDelete(ticket) ||
+         g_trade.ResultRetcode() != TRADE_RETCODE_DONE)
+      {
+         PrintFormat("Order cancellation failed: ticket=%I64u retcode=%u %s",
+                     ticket, g_trade.ResultRetcode(), g_trade.ResultRetcodeDescription());
+         all_cancelled = false;
+      }
+   }
+   return all_cancelled;
+}
+
+//+------------------------------------------------------------------+
+//| Close positions owned by this EA                                  |
+//+------------------------------------------------------------------+
+bool CloseOwnPositions(const bool all_symbols)
 {
    bool all_closed = true;
    for(int index = PositionsTotal() - 1; index >= 0; --index)
@@ -319,14 +357,14 @@ bool CloseOwnPositions()
       const ulong ticket = PositionGetTicket(index);
       if(ticket == 0)
          continue;
-      if(PositionGetString(POSITION_SYMBOL) != _Symbol ||
-         PositionGetInteger(POSITION_MAGIC) != InpMagicNumber)
+      if(PositionGetInteger(POSITION_MAGIC) != InpMagicNumber ||
+         (!all_symbols && PositionGetString(POSITION_SYMBOL) != _Symbol))
       {
          continue;
       }
 
       if(!g_trade.PositionClose(ticket, (ulong)InpSlippagePoints) ||
-         !TradeResultSucceeded())
+         g_trade.ResultRetcode() != TRADE_RETCODE_DONE)
       {
          PrintFormat("Position close failed: ticket=%I64u retcode=%u %s",
                      ticket, g_trade.ResultRetcode(), g_trade.ResultRetcodeDescription());
@@ -334,6 +372,29 @@ bool CloseOwnPositions()
       }
    }
    return all_closed;
+}
+
+//+------------------------------------------------------------------+
+//| Detect whether a current position conflicts with a new signal      |
+//+------------------------------------------------------------------+
+bool HasOwnPositionAgainstSignal(const int signal)
+{
+   const ENUM_POSITION_TYPE desired_type =
+      signal > 0 ? POSITION_TYPE_BUY : POSITION_TYPE_SELL;
+
+   for(int index = PositionsTotal() - 1; index >= 0; --index)
+   {
+      const ulong ticket = PositionGetTicket(index);
+      if(ticket == 0)
+         continue;
+      if(PositionGetString(POSITION_SYMBOL) == _Symbol &&
+         PositionGetInteger(POSITION_MAGIC) == InpMagicNumber &&
+         (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE) != desired_type)
+      {
+         return true;
+      }
+   }
+   return false;
 }
 
 //+------------------------------------------------------------------+
@@ -387,31 +448,35 @@ int VolumeDigits(const double volume_step)
 }
 
 //+------------------------------------------------------------------+
-//| Convert risk at stop distance to broker-valid volume              |
+//| Convert server-calculated stop loss to broker-valid volume         |
 //+------------------------------------------------------------------+
-double CalculateRiskVolume(const double entry_price, const double stop_price)
+double CalculateRiskVolume(const ENUM_ORDER_TYPE order_type,
+                           const double entry_price,
+                           const double stop_price)
 {
-   const double stop_distance = MathAbs(entry_price - stop_price);
    const double equity = AccountInfoDouble(ACCOUNT_EQUITY);
-   const double tick_size = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_SIZE);
-   double tick_value = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_VALUE_LOSS);
-   if(tick_value <= 0.0)
-      tick_value = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_VALUE);
-
    const double volume_min = SymbolInfoDouble(_Symbol, SYMBOL_VOLUME_MIN);
    const double volume_max = SymbolInfoDouble(_Symbol, SYMBOL_VOLUME_MAX);
    const double volume_step = SymbolInfoDouble(_Symbol, SYMBOL_VOLUME_STEP);
 
-   if(stop_distance <= 0.0 || equity <= 0.0 || tick_size <= 0.0 ||
-      tick_value <= 0.0 || volume_min <= 0.0 || volume_max < volume_min ||
-      volume_step <= 0.0)
+   if(equity <= 0.0 || volume_min <= 0.0 || volume_max < volume_min ||
+      volume_step <= 0.0 || MathAbs(entry_price - stop_price) <= 0.0)
    {
       Print("Volume calculation failed: invalid symbol/account properties.");
       return 0.0;
    }
 
+   double one_lot_profit = 0.0;
+   ResetLastError();
+   if(!OrderCalcProfit(order_type, _Symbol, 1.0, entry_price, stop_price,
+                       one_lot_profit))
+   {
+      PrintFormat("Volume calculation failed: OrderCalcProfit error=%d", GetLastError());
+      return 0.0;
+   }
+
    const double risk_amount = equity * InpRiskPercent / 100.0;
-   const double loss_per_lot = (stop_distance / tick_size) * tick_value;
+   const double loss_per_lot = MathAbs(one_lot_profit);
    if(loss_per_lot <= 0.0)
       return 0.0;
 
@@ -469,14 +534,38 @@ bool OpenPosition(const int signal, const double atr_value)
    const double stop_price = NormalizePriceToTick(
       signal > 0 ? entry_price - stop_distance : entry_price + stop_distance,
       signal < 0);
+   const double actual_stop_distance = MathAbs(entry_price - stop_price);
    const double target_price = NormalizePriceToTick(
       signal > 0
-         ? entry_price + stop_distance * InpRiskRewardRatio
-         : entry_price - stop_distance * InpRiskRewardRatio,
+         ? entry_price + actual_stop_distance * InpRiskRewardRatio
+         : entry_price - actual_stop_distance * InpRiskRewardRatio,
       signal > 0);
-   const double volume = CalculateRiskVolume(entry_price, stop_price);
+   const ENUM_ORDER_TYPE order_type =
+      signal > 0 ? ORDER_TYPE_BUY : ORDER_TYPE_SELL;
+   const double worst_case_entry =
+      signal > 0
+         ? entry_price + InpSlippagePoints * _Point
+         : entry_price - InpSlippagePoints * _Point;
+   const double volume =
+      CalculateRiskVolume(order_type, worst_case_entry, stop_price);
    if(volume <= 0.0)
       return false;
+
+   double required_margin = 0.0;
+   ResetLastError();
+   if(!OrderCalcMargin(order_type, _Symbol, volume, worst_case_entry,
+                       required_margin))
+   {
+      PrintFormat("Entry skipped: OrderCalcMargin error=%d", GetLastError());
+      return false;
+   }
+   const double free_margin = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   if(required_margin > free_margin * 0.95)
+   {
+      PrintFormat("Entry skipped: required margin %.2f exceeds safety allowance %.2f.",
+                  required_margin, free_margin * 0.95);
+      return false;
+   }
 
    bool submitted = false;
    if(signal > 0)
@@ -484,11 +573,17 @@ bool OpenPosition(const int signal, const double atr_value)
    else
       submitted = g_trade.Sell(volume, _Symbol, 0.0, stop_price, target_price, "SafeEMA sell");
 
-   if(!submitted || !TradeResultSucceeded())
+   const uint retcode = g_trade.ResultRetcode();
+   if(!submitted || retcode != TRADE_RETCODE_DONE)
    {
       PrintFormat("Entry failed: signal=%d volume=%.4f retcode=%u %s",
-                  signal, volume, g_trade.ResultRetcode(),
+                  signal, volume, retcode,
                   g_trade.ResultRetcodeDescription());
+      if(retcode == TRADE_RETCODE_PLACED ||
+         retcode == TRADE_RETCODE_DONE_PARTIAL)
+      {
+         CancelOwnOrders(false);
+      }
       return false;
    }
 
@@ -505,6 +600,13 @@ int OnInit()
 {
    if(!ValidateInputs())
       return INIT_PARAMETERS_INCORRECT;
+
+   if((ENUM_ACCOUNT_MARGIN_MODE)AccountInfoInteger(ACCOUNT_MARGIN_MODE) !=
+      ACCOUNT_MARGIN_MODE_RETAIL_HEDGING)
+   {
+      Print("Initialization failed: v0.1 safety baseline requires a hedging account.");
+      return INIT_FAILED;
+   }
 
    g_fast_ema_handle = iMA(_Symbol, _Period, InpFastEMAPeriod, 0, MODE_EMA, PRICE_CLOSE);
    g_slow_ema_handle = iMA(_Symbol, _Period, InpSlowEMAPeriod, 0, MODE_EMA, PRICE_CLOSE);
@@ -525,7 +627,7 @@ int OnInit()
       Print("Warning: unable to configure symbol filling policy.");
 
    InitializeRiskState();
-   PrintFormat("SafeEMACrossEA v0.1.0 initialized. Trading authorized=%s tester=%s",
+   PrintFormat("SafeEMACrossEA v0.1.1 initialized. Trading authorized=%s tester=%s",
                TradingAuthorized() ? "true" : "false",
                MQLInfoInteger(MQL_TESTER) ? "true" : "false");
    return INIT_SUCCEEDED;
@@ -558,11 +660,25 @@ void OnTick()
          PrintFormat("Risk breaker active: %s. New entries are blocked.", risk_reason);
          g_risk_halt_logged = true;
       }
-      if(TradingAuthorized() && CountOwnPositions() > 0)
-         CloseOwnPositions();
+      if(TradingAuthorized())
+      {
+         CancelOwnOrders(true);
+         CloseOwnPositions(true);
+      }
       return;
    }
    g_risk_halt_logged = false;
+
+   if(TradingAuthorized() && CountOwnOrders(false) > 0)
+      CancelOwnOrders(false);
+
+   if(g_exit_pending)
+   {
+      if(!CloseOwnPositions(false) || CountOwnPositions() > 0)
+         return;
+      g_exit_pending = false;
+      Print("Deferred position exit completed.");
+   }
 
    if(!IsNewBar())
       return;
@@ -581,10 +697,17 @@ void OnTick()
    const int own_positions = CountOwnPositions();
    if(own_positions > 0)
    {
-      if(!CloseOwnPositions())
+      if(!HasOwnPositionAgainstSignal(signal))
+      {
+         Print("Entry skipped: same-direction position already exists.");
+         return;
+      }
+      g_exit_pending = true;
+      if(!CancelOwnOrders(false) || !CloseOwnPositions(false))
          return;
       if(CountOwnPositions() > 0)
          return;
+      g_exit_pending = false;
    }
 
    if(!IsWithinTradingSession())
@@ -596,7 +719,7 @@ void OnTick()
    const long spread_points = SymbolInfoInteger(_Symbol, SYMBOL_SPREAD);
    if(spread_points < 0 || spread_points > InpMaximumSpreadPoints)
    {
-      PrintFormat("Entry skipped: spread=%d points, maximum=%d.",
+      PrintFormat("Entry skipped: spread=%I64d points, maximum=%d.",
                   spread_points, InpMaximumSpreadPoints);
       return;
    }
@@ -605,7 +728,7 @@ void OnTick()
       Print("Entry skipped: another strategy owns a position on this symbol.");
       return;
    }
-   if(CountOwnPositions() >= InpMaximumPositions)
+   if(CountOwnPositions() + CountOwnOrders(false) >= InpMaximumPositions)
    {
       Print("Entry skipped: maximum position count reached.");
       return;

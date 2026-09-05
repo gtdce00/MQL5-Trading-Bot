@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.1.1 - 2026-09-05
+
+- จำกัดการทำงานไว้ที่บัญชี hedging เพื่อป้องกันการปิด net position ที่มีหลายกลยุทธ์ร่วมกัน
+- เพิ่มการตรวจและยกเลิก active orders ที่ EA ไม่ได้ตั้งใจค้างไว้
+- แก้ account risk breaker ให้ปิด positions และยกเลิก orders ของ Magic Number เดียวกันทุก Symbol
+- ใช้ `OrderCalcProfit` ที่ worst-case slippage สำหรับคำนวณความเสี่ยงต่อ lot
+- เพิ่ม free-margin safety allowance ก่อนส่งคำสั่ง
+- คำนวณ take profit จาก stop distance หลัง normalize ตาม tick size
+- ป้องกันการปิด position ทิศเดิมและยืนยัน trade-server retcode อย่างเข้มงวด
+
+### Verification
+
+- Static safety tests: รอทดสอบหลัง commit
+- MetaEditor compile: ยังไม่ได้ทดสอบ
+- MetaTrader 5 Strategy Tester: ยังไม่ได้ทดสอบ
+
 ## v0.1.0 - 2026-09-05
 
 - สร้าง `SafeEMACrossEA` รุ่นฐานโดยใช้ EMA crossover จากแท่งปิด

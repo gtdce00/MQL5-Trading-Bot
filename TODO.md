@@ -8,10 +8,12 @@
 - [x] เพิ่ม risk-based lot size, stop loss, take profit และ broker volume normalization
 - [x] เพิ่ม daily loss/drawdown breaker, spread filter, session filter และ Magic Number
 - [x] เพิ่ม static safety regression tests
+- [x] จำกัด v0.1.1 ให้ใช้บัญชี hedging เพื่อป้องกัน mixed-ownership net positions
+- [x] เพิ่ม active-order cleanup และ account-wide risk-breaker liquidation
 
 ## กำลังทำ
 
-- [ ] ยืนยันว่า v0.1.0 Compile แบบไม่มี error/warning ด้วย MetaEditor
+- [ ] ยืนยันว่า v0.1.1 Compile แบบไม่มี error/warning ด้วย MetaEditor
 
 ## ต้องทำต่อ
 
@@ -27,6 +29,7 @@
 - [ ] Environment ปัจจุบันไม่มี MetaEditor และ MetaTrader 5 จึงยัง Compile/ทดสอบจริงไม่ได้
 - [ ] ตรวจสอบความถูกต้องของ filling mode, stop distance และ tick-value calculation กับหลายประเภท Symbol
 - [ ] ทดสอบบัญชี netting และ hedging แยกกัน
+- [ ] ออกแบบ netting ownership tracking ก่อนอนุญาตบัญชี netting
 
 ## สิ่งที่ควรปรับปรุง
 
