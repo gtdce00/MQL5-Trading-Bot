@@ -12,8 +12,8 @@
 
 ### Verification
 
-- Static safety tests: รอทดสอบหลัง commit
-- MetaEditor compile: ยังไม่ได้ทดสอบ
+- Static safety tests: ผ่าน 9 tests
+- MetaEditor compile: ผ่าน build 6180, 0 errors, 0 warnings
 - MetaTrader 5 Strategy Tester: ยังไม่ได้ทดสอบ
 
 ## v0.1.0 - 2026-09-05

@@ -13,10 +13,11 @@
 
 ## กำลังทำ
 
-- [ ] ยืนยันว่า v1.001 Compile แบบไม่มี error/warning ด้วย MetaEditor
+- [ ] รัน baseline Strategy Tester และตรวจ runtime logs
 
 ## ต้องทำต่อ
 
+- [x] ยืนยันว่า v1.001 Compile แบบไม่มี error/warning ด้วย MetaEditor
 - [ ] รัน MT5 Strategy Tester ด้วย historical tick data
 - [ ] ตรวจ Journal, Experts และ Tester logs
 - [ ] บันทึก Symbol, Timeframe, date range, deposit, spread และ model

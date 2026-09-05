@@ -5,3 +5,7 @@ __pycache__/
 *.ex5
 *.log
 tester/
+
+# Generated MetaEditor/Strategy Tester output
+artifacts/*
+!artifacts/README.md
