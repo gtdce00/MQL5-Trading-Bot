@@ -14,13 +14,13 @@
 - [x] เพิ่ม singleton lock ต่อ account/server และ monotonic persistence
 - [x] แก้ stop-distance quote side และตรวจ close completion/retry
 - [x] กำหนด real-tick model และ parameter set แบบ explicit
-- [x] เพิ่ม nonzero tester-only login เพื่อให้ headless tester เริ่มได้
+- [x] Compile v1.0.0 ด้วย MetaEditor build 6180: 0 errors, 0 warnings
+- [x] เปิด MetaTrader 5 build 6180 บน Wine 11.16 และตรวจ terminal/tester logs
 
 ## กำลังทำ
 
-- [ ] ติดตั้ง/ค้นหา MetaTrader 5 test environment
-- [ ] Compile v1.0.0 ด้วย MetaEditor และแก้ error/warning
-- [ ] รัน Strategy Tester จริงและตรวจทุก log
+- [ ] จัดเตรียม authorized hedging demo account ใน MT5 test environment
+- [ ] รัน Strategy Tester ใหม่และยืนยันว่า EA ผ่าน OnInit
 
 ## ต้องทำต่อ
 
@@ -32,9 +32,9 @@
 
 ## ปัญหาที่ต้องแก้
 
-- [ ] Environment เริ่มต้นยังไม่พบ Wine, MetaEditor หรือ MetaTrader 5
-- [ ] ยังไม่ได้ทดสอบ EA ใน MetaTrader 5 จริง
-- [ ] ยังไม่มี historical-data backtest report
+- [ ] Strategy Tester ไม่เริ่ม: `tester not started because the account is not specified`
+- [ ] ยังไม่ได้ทดสอบ EA ใน MetaTrader 5 จริง เพราะ tester หยุดก่อน OnInit
+- [ ] ยังไม่มี historical-data backtest report หรือ performance metrics
 
 ## สิ่งที่ควรปรับปรุง
 
