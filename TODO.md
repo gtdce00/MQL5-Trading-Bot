@@ -13,13 +13,15 @@
 
 ## กำลังทำ
 
-- [ ] รัน baseline Strategy Tester และตรวจ runtime logs
+- [ ] จัดหา authorized demo account context เพื่อให้ baseline Strategy Tester เริ่มได้
 
 ## ต้องทำต่อ
 
 - [x] ยืนยันว่า v1.001 Compile แบบไม่มี error/warning ด้วย MetaEditor
+- [x] เปิด MT5 build 6180 และยืนยันว่า startup tester config ถูกโหลด
+- [x] ตรวจ Terminal และ Tester logs ของรอบที่ล้มเหลว
 - [ ] รัน MT5 Strategy Tester ด้วย historical tick data
-- [ ] ตรวจ Journal, Experts และ Tester logs
+- [ ] ตรวจ Journal, Experts และ Tester logs หลัง EA initialize
 - [ ] บันทึก Symbol, Timeframe, date range, deposit, spread และ model
 - [ ] บันทึก Net Profit, Profit Factor, Drawdown, Recovery Factor, Win Rate, Trades, Expected Payoff และ Sharpe Ratio
 - [ ] สร้าง in-sample/out-of-sample baseline ก่อนปรับ parameter หรือกลยุทธ์
@@ -27,13 +29,15 @@
 
 ## ปัญหาที่ต้องแก้
 
-- [ ] Environment ปัจจุบันไม่มี MetaEditor และ MetaTrader 5 จึงยัง Compile/ทดสอบจริงไม่ได้
+- [ ] Strategy Tester ไม่เริ่มหากไม่มี account context
+- [ ] MetaQuotes-Demo registration ต้องใช้ข้อมูลส่วนบุคคล; ห้ามสร้างข้อมูลจริงแทนผู้ใช้
 - [ ] ตรวจสอบความถูกต้องของ filling mode, stop distance และ tick-value calculation กับหลายประเภท Symbol
 - [ ] ทดสอบบัญชี netting และ hedging แยกกัน
 - [ ] ออกแบบ netting ownership tracking ก่อนอนุญาตบัญชี netting
 
 ## สิ่งที่ควรปรับปรุง
 
-- [ ] เพิ่ม reproducible Strategy Tester configuration และ Windows automation script
+- [x] เพิ่ม reproducible Strategy Tester configuration
+- [ ] เพิ่ม Windows automation script สำหรับ terminal ที่มี demo account อยู่แล้ว
 - [ ] เพิ่มการตรวจผลกระทบจาก deposit/withdrawal ต่อ persistent equity breaker
 - [ ] เพิ่ม walk-forward และ multi-regime test หลัง baseline ผ่าน runtime validation

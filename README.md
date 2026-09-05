@@ -45,5 +45,7 @@ position accounting and will reject netting accounts during initialization.
 
 ## Verification status
 
-See `DEVELOPMENT_STATE.md`. No claim of operational readiness is made
-without MetaEditor compile output and MetaTrader 5 Strategy Tester logs.
+See `DEVELOPMENT_STATE.md` and `docs/VERIFICATION_v1.001.md`. The EA
+compiles cleanly, but its Strategy Tester baseline is currently blocked
+by the absence of an authorized demo account context. No claim of
+operational readiness is made.

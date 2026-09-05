@@ -14,7 +14,9 @@
 
 - Static safety tests: ผ่าน 9 tests
 - MetaEditor compile: ผ่าน build 6180, 0 errors, 0 warnings
-- MetaTrader 5 Strategy Tester: ยังไม่ได้ทดสอบ
+- MetaTrader 5 startup: ผ่านบน build 6180/Wine 10.0
+- Strategy Tester: ไม่เริ่มเพราะไม่มี account context; EA ยังไม่ถูก initialize
+- Backtest metrics: N/A
 
 ## v0.1.0 - 2026-09-05
 

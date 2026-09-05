@@ -1,16 +1,16 @@
 # Development State
 
 - เวอร์ชันปัจจุบัน: v1.001
-- Phase: Safety-first baseline implementation
-- เป้าหมายปัจจุบัน: สร้าง EA รุ่นฐานที่ปิด live trading โดยค่าเริ่มต้นและป้องกันความเสี่ยงก่อนเริ่มปรับกลยุทธ์
-- งานล่าสุด: แก้ safety audit เรื่อง netting ownership, active orders, account-wide breaker และการคำนวณ risk volume
+- Phase: Baseline runtime verification blocked
+- เป้าหมายปัจจุบัน: รัน baseline Strategy Tester ให้ผ่านก่อนปรับกลยุทธ์
+- งานล่าสุด: เปิด MT5 จริง, โหลด tester config และตรวจ log หลัง Strategy Tester ไม่เริ่ม
 - ผล Compile: ผ่าน MetaEditor build 6180 บน Wine 10.0 — 0 errors, 0 warnings
-- ผล MT5 Test: MetaTrader 5 build 6180 เปิดได้จริง; ยังไม่ได้ยืนยัน EA ใน Strategy Tester
-- ผล Backtest: ยังไม่ได้รัน Strategy Tester และยังไม่มีค่าผลลัพธ์
-- ปัญหาที่พบ: Wine 9 ถูก MT5 ปฏิเสธ; ติดตั้ง Wine 10 แล้วและยังต้องยืนยัน historical data/Strategy Tester
+- ผล MT5 Test: MT5 เปิดและอ่าน config ได้ แต่ Strategy Tester หยุดก่อนโหลด EA เพราะไม่มี account context
+- ผล Backtest: ไม่เริ่ม — Profit Factor, Net Profit, Drawdown และจำนวน Trade เป็น N/A
+- ปัญหาที่พบ: `tester not started because the account is not specified`; การสร้าง MetaQuotes-Demo ต้องใช้ข้อมูลส่วนบุคคลที่ automation ไม่มี
 - สิ่งที่แก้ไข: จำกัดบัญชี hedging, จัดการ active orders, ปิด exposure ทุก Symbol เมื่อ breaker ทำงาน และใช้ `OrderCalcProfit` ที่ worst-case slippage
 - ผลเปรียบเทียบ: v1.001 ลดความเสี่ยง runtime เทียบกับ v0.1.0 แต่ยังไม่มี baseline backtest สำหรับเปรียบเทียบ performance
-- งานถัดไป: รัน MT5 Strategy Tester, ตรวจ Journal/Experts log และบันทึก metrics ก่อนเปลี่ยนกลยุทธ์
+- งานถัดไป: ใช้ terminal ที่มี authorized demo account แบบ hedging แล้วรัน `config/strategy-tester-v1.001.ini` เดิม; ห้ามปรับกลยุทธ์ก่อน baseline ผ่าน
 - สถานะการพัฒนา: CONTINUE
 
 > ห้ามใช้เอกสารนี้เป็นหลักฐานว่า EA พร้อมใช้งานจริง จนกว่าจะมีผล Compile และ Strategy Tester จาก MetaTrader 5
