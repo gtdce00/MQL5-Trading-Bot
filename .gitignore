@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+
+# MetaEditor build output and local terminal artifacts
+*.ex5
+*.log
+tester/
+
+# Generated MetaEditor/Strategy Tester output
+artifacts/*
+!artifacts/README.md
