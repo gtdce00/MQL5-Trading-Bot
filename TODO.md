@@ -14,6 +14,7 @@
 - [x] เพิ่ม singleton lock ต่อ account/server และ monotonic persistence
 - [x] แก้ stop-distance quote side และตรวจ close completion/retry
 - [x] กำหนด real-tick model และ parameter set แบบ explicit
+- [x] เพิ่ม nonzero tester-only login เพื่อให้ headless tester เริ่มได้
 
 ## กำลังทำ
 

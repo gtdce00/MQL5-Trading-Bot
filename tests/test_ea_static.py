@@ -102,6 +102,7 @@ class SafetyFirstEMAStaticTests(unittest.TestCase):
         parser.optionxform = str
         parser.read(MT5_TEST_DIR / "strategy_tester.ini", encoding="utf-8")
         tester = parser["Tester"]
+        self.assertNotEqual("0", tester["Login"])
         self.assertEqual("4", tester["Model"])
         self.assertEqual("0", tester["Optimization"])
         self.assertEqual("SafetyFirstEMA-v1.0.0.set", tester["ExpertParameters"])

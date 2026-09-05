@@ -17,4 +17,5 @@
 - ตรวจสอบ close completion และ retry เมื่อปิด position ไม่สมบูรณ์
 - คำนวณ minimum stop จาก quote side ที่ broker ใช้ตรวจจริง
 - ปิด live trading โดยค่าเริ่มต้นและแยก permission ของ Strategy Tester
-- เพิ่ม static safety tests, explicit parameter set และ EURUSD M15 real-tick baseline
+- เพิ่ม static safety tests, explicit parameter set, tester-only simulated login
+  และ EURUSD M15 real-tick baseline

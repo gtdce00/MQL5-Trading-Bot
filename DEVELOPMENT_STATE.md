@@ -9,12 +9,14 @@
 - ผล Backtest: PENDING — ยังไม่มีรายงาน Strategy Tester
 - ปัญหาที่พบ: repository เดิมมีเพียง README; environment ยังไม่พบ MT5/Wine;
   safety audit พบ account-scope mismatch, netting-position risk, incomplete
-  close handling, stop-distance quote error และ risk state หายหลัง restart
+  close handling, stop-distance quote error และ risk state หายหลัง restart;
+  Strategy Tester รอบแรกไม่เริ่มเพราะ config ไม่มี tester login
 - สิ่งที่แก้ไข: ปิด live trading โดยค่าเริ่มต้น; เพิ่ม risk-based volume, SL/TP,
   spread/session filters, magic-number isolation, duplicate-position protection,
   account-wide daily-loss lock, persistent equity-drawdown lock, hedging-account
   guard, account/server singleton, monotonic fail-closed persistence,
-  close retry/reconciliation, cost reserve และ closed-bar signals
+  close retry/reconciliation, cost reserve, closed-bar signals และ tester-only
+  simulated login ที่ไม่ใช่ broker credentials
 - ผลเปรียบเทียบ: ไม่มีเวอร์ชัน EA ก่อนหน้าสำหรับเปรียบเทียบ
 - งานถัดไป: Compile v1.0.0, รัน Strategy Tester, ตรวจ Journal/Experts/Tester logs
   และบันทึกตัวชี้วัด backtest

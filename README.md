@@ -65,7 +65,8 @@ terminal64.exe /portable /config:tests\mt5\strategy_tester.ini
 
 The checked-in tester baseline uses EURUSD M15, real historical dates
 2024-01-01 through 2024-12-31, every-tick modeling, USD 10,000 initial
-capital, and 1:100 leverage. Reports and logs must be reviewed before changing
-the development state from unverified. Repeat with
+capital, 1:100 leverage, and a nonzero tester-only simulated login (not broker
+credentials). Reports and logs must be reviewed before changing the
+development state from unverified. Repeat with
 `strategy_tester_latency.ini`, which enables random execution delay, before any
 demo-account decision.
