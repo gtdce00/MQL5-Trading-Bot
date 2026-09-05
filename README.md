@@ -1,11 +1,36 @@
 # MQL5 Trading Bot
 
-AI-assisted automated trading system for MetaTrader 5.
+Safety-first automated trading research for MetaTrader 5. The project is in
+active development and is not approved for live trading.
+
+## Current Expert Advisor
+
+`MQL5/Experts/SafeMACrossEA.mq5` is an EMA-crossover baseline with:
+
+- signals calculated only from completed candles (buffer shifts 2 and 1);
+- ATR-based stop loss and fixed risk/reward take profit;
+- risk-based volume rounded down to the broker's volume step;
+- daily-loss and account-drawdown circuit breakers;
+- restart-persistent risk state for each account and magic number;
+- spread, slippage, session, position-count, and magic-number controls;
+- live/demo order submission disabled by default while Strategy Tester
+  execution remains available.
+
+No profitability claim is made. See `DEVELOPMENT_STATE.md` for the exact
+compile and MetaTrader 5 test evidence from the latest development cycle.
 
 ## Project Structure
 
-- MQL5/ - Expert Advisors and indicators
-- Python/ - AI and data analysis
-- config/ - Trading configuration
-- tests/ - Backtesting and testing
-- docs/ - Documentation
+- `MQL5/Experts/` — Expert Advisor source
+- `config/` — Strategy Tester configuration
+- `tests/` — automated checks and backtest artifacts
+- `DEVELOPMENT_STATE.md` — latest verified development state
+- `TODO.md` — prioritized work
+- `CHANGELOG.md` — version history
+
+## Safety
+
+`InpAllowLiveTrading` defaults to `false`. Do not enable it until the EA has
+passed compilation, Strategy Tester regression tests, out-of-sample tests,
+and a supervised demo-account trial. This software is experimental and is
+not financial advice.

@@ -1,0 +1,4 @@
+*.ex5
+*.log
+tests/backtests/*.htm
+tests/backtests/*.png
