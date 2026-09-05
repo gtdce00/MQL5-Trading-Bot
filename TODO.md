@@ -2,7 +2,7 @@
 
 ## เสร็จแล้ว
 
-- [x] สร้าง EA รุ่นเริ่มต้น v0.1.0
+- [x] สร้าง EA รุ่นเริ่มต้น v1.0.0
 - [x] ปิด live trading โดยค่าเริ่มต้น แต่อนุญาตเฉพาะ Strategy Tester
 - [x] ใช้ EMA และ ATR จากแท่งปิดเท่านั้น (shift 1 และ 2)
 - [x] เพิ่ม risk-based lot sizing และปัด volume ลงตาม volume step
@@ -18,7 +18,7 @@
 ## กำลังทำ
 
 - [ ] ติดตั้ง/ค้นหา MetaTrader 5 test environment
-- [ ] Compile v0.1.0 ด้วย MetaEditor และแก้ error/warning
+- [ ] Compile v1.0.0 ด้วย MetaEditor และแก้ error/warning
 - [ ] รัน Strategy Tester จริงและตรวจทุก log
 
 ## ต้องทำต่อ
@@ -26,7 +26,7 @@
 - [ ] บันทึก Net Profit, Profit Factor, Maximum Drawdown และจำนวน trades
 - [ ] บันทึก Recovery Factor, Win Rate, Average Trade และ Expected Payoff
 - [ ] บันทึก Sharpe, long/short, wins/losses และ consecutive results
-- [ ] สร้าง out-of-sample และ multi-regime baseline หลัง v0.1.0 ผ่าน runtime test
+- [ ] สร้าง out-of-sample และ multi-regime baseline หลัง v1.0.0 ผ่าน runtime test
 - [ ] เปรียบเทียบผลกับรุ่นถัดไปโดยไม่ปรับ parameter แบบสุ่ม
 
 ## ปัญหาที่ต้องแก้

@@ -1,6 +1,6 @@
 # Development State
 
-- เวอร์ชันปัจจุบัน: v0.1.0
+- เวอร์ชันปัจจุบัน: v1.0.0
 - Phase: Safety baseline implementation
 - เป้าหมายปัจจุบัน: สร้าง EA รุ่นเริ่มต้นที่ควบคุมความเสี่ยงและทดสอบซ้ำได้
 - งานล่าสุด: เพิ่ม SafetyFirstEMA, static safety tests และ Strategy Tester config
@@ -16,7 +16,7 @@
   guard, account/server singleton, monotonic fail-closed persistence,
   close retry/reconciliation, cost reserve และ closed-bar signals
 - ผลเปรียบเทียบ: ไม่มีเวอร์ชัน EA ก่อนหน้าสำหรับเปรียบเทียบ
-- งานถัดไป: Compile v0.1.0, รัน Strategy Tester, ตรวจ Journal/Experts/Tester logs
+- งานถัดไป: Compile v1.0.0, รัน Strategy Tester, ตรวจ Journal/Experts/Tester logs
   และบันทึกตัวชี้วัด backtest
 - สถานะการพัฒนา: CONTINUE
 
@@ -32,7 +32,7 @@
 
 ## Verification metrics
 
-| Metric | v0.1.0 |
+| Metric | v1.0.0 |
 |---|---:|
 | Compile errors | PENDING |
 | Compile warnings | PENDING |

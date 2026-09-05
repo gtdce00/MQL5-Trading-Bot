@@ -1,12 +1,12 @@
 #property strict
 #property copyright "2026 MQL5 Trading Bot contributors"
 #property link      "https://github.com/gtdce00/MQL5-Trading-Bot"
-#property version   "0.100"
+#property version   "1.000"
 #property description "Safety-first EMA crossover EA for controlled testing"
 
 #include <Trade/Trade.mqh>
 
-const string EA_VERSION = "0.1.0";
+const string EA_VERSION = "1.0.0";
 
 input group "Trading safety"
 input bool   InpEnableLiveTrading        = false;
@@ -119,7 +119,7 @@ bool ValidateInputs()
    }
    if(InpMaxPositions != 1)
    {
-      Print("Invalid configuration: v0.1.0 requires InpMaxPositions=1.");
+      Print("Invalid configuration: v1.0.0 requires InpMaxPositions=1.");
       return false;
    }
    if(InpMaxSpreadPoints <= 0.0 || InpMaxSlippagePoints < 0)

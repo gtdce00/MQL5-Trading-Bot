@@ -53,7 +53,7 @@ Before running the Strategy Tester, copy:
 
 - `MQL5/Experts/SafetyFirstEMA.mq5` (and its compiled `.ex5`) into the
   terminal's `MQL5/Experts/` directory;
-- `tests/mt5/SafetyFirstEMA-v0.1.0.set` into
+- `tests/mt5/SafetyFirstEMA-v1.0.0.set` into
   `MQL5/Profiles/Tester/`; and
 - the selected `.ini` file to a path visible inside the Wine prefix.
 

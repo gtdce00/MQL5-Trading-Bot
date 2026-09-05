@@ -1,7 +1,8 @@
 # Changelog
 
-## v0.1.0 — 2026-09-05
+## v1.0.0 — 2026-09-05
 
+- ใช้ MQL program version `1.000` ตามรูปแบบที่ MetaEditor/Market รองรับ
 - สร้าง `SafetyFirstEMA` Expert Advisor รุ่นแรก
 - เพิ่ม EMA crossover signal จากแท่งปิดเท่านั้นเพื่อลด look-ahead bias
 - เพิ่ม ATR Stop Loss และ reward/risk Take Profit

@@ -104,12 +104,12 @@ class SafetyFirstEMAStaticTests(unittest.TestCase):
         tester = parser["Tester"]
         self.assertEqual("4", tester["Model"])
         self.assertEqual("0", tester["Optimization"])
-        self.assertEqual("SafetyFirstEMA-v0.1.0.set", tester["ExpertParameters"])
+        self.assertEqual("SafetyFirstEMA-v1.0.0.set", tester["ExpertParameters"])
         self.assertNotIn("/", tester["Report"])
         self.assertNotIn("\\", tester["Report"])
 
     def test_tester_parameter_file_fixes_every_input(self) -> None:
-        set_text = (MT5_TEST_DIR / "SafetyFirstEMA-v0.1.0.set").read_text(
+        set_text = (MT5_TEST_DIR / "SafetyFirstEMA-v1.0.0.set").read_text(
             encoding="utf-8"
         )
         parameter_lines = [
