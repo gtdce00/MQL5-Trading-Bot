@@ -3,7 +3,7 @@
 //|                        Safety-first EMA crossover baseline EA     |
 //+------------------------------------------------------------------+
 #property copyright "MQL5 Trading Bot"
-#property version   "0.11"
+#property version   "0.101"
 #property strict
 
 #include <Trade/Trade.mqh>
