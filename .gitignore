@@ -1,0 +1,8 @@
+*.ex5
+*.log
+*.xml
+*.html
+*.htm
+reports/
+__pycache__/
+*.pyc
